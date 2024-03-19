@@ -1,0 +1,27 @@
+import 'package:flutter/material.dart';
+import 'package:instagram/data/response/api_response.dart';
+import 'package:instagram/model/followers_model.dart';
+import 'package:instagram/repository/user_profile_repository.dart';
+
+class OtherUserFollowersViewModel with ChangeNotifier {
+  final UserProfileRepository myRepo;
+
+  // FOR OTHER USER
+
+  OtherUserFollowersViewModel() : myRepo = UserProfileRepository();
+  ApiResponse<FollowersModel> otherUserFollowerList = ApiResponse.loading();
+  setOtherUserFollowerList(ApiResponse<FollowersModel> response) {
+    otherUserFollowerList = response;
+    notifyListeners();
+  }
+
+// FOR OTHER USER
+  Future<void> fetchOtherFollowersList(String userId) async {
+    setOtherUserFollowerList(ApiResponse.loading());
+    myRepo.getOtherUserFollowersListApi(userId).then((value) {
+      setOtherUserFollowerList(ApiResponse.complete(value));
+    }).onError((error, stackTrace) {
+      setOtherUserFollowerList(ApiResponse.error(error.toString()));
+    });
+  }
+}
